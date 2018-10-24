@@ -73,7 +73,7 @@ def train(ctx, iterations, save_rate):
                 "played {neural_net.iterations} games").format(**locals()))
     click.echo('#### training {iterations} matches ####'.format(**locals()))
     for _i in range(iterations // save_rate):
-        vieja_entrenamiento.juego_automatizado(save_rate)
+        vieja_entrenamiento.juego_automatizado(save_rate, False)
         neural_net.save(ctx.folder)
     vieja_entrenamiento.juego_automatizado(iterations % save_rate)
     neural_net.save(ctx.folder)
@@ -93,7 +93,7 @@ def test(ctx, automatic):
         click.echo('#### automated test ####')
         edbot = IAEduardo('edbot')
         vieja_prueba = TicTacToe(edbot, player1, folder=ctx.folder)
-        totals = vieja_prueba.juego_automatizado(10)
+        totals = vieja_prueba.juego_automatizado(10, True)
         # print(
         #     f"{wolfbot} won {totals[wolfbot]},"
         #     f" lost {totals[edbot]}, "

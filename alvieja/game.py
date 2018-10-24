@@ -124,7 +124,7 @@ class TicTacToe:
                     "o" if self._jugador_actual == "x" else "x")
         print("Fin del juego.")
 
-    def juego_automatizado(self, partidas=1000):
+    def juego_automatizado(self, partidas=1000, resgistro=False):
         """Recrea n partidas entre los jugadores y mide las victorias"""
         assert (isinstance(partidas, int) and
                 (partidas % 2) == 0), 'las partidas deben ser un numero par'
@@ -135,8 +135,8 @@ class TicTacToe:
             registro.append(ganador)
             bitacoras.append(bitacora)
         totales = self._calc_totales(registro)
-        self._guardar_bitacoras(bitacoras, totales)
-
+        if resgistro:
+            self._guardar_bitacoras(bitacoras, totales)
         return totales
 
     @property
