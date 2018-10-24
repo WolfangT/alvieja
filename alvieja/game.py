@@ -233,7 +233,7 @@ class TicTacToe:
                 movs.append('{0}->{1}'.format(jugs[i], mov))
                 i = 1 - i
             lineas.append('%s) ' % _n + ' '.join(movs))
-        _name = 'Registro competencia {0[0]}.txt'.format(fecha.split())
+        _name = 'test_log_{}.txt'.format(fecha.split('.')[1])
         _filename = self.folder / _name
         with open(_filename, 'w') as _file:
             _file.write(cabeza + '\n' + '\n'.join(lineas))
