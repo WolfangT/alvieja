@@ -235,5 +235,5 @@ class TicTacToe:
             lineas.append('%s) ' % _n + ' '.join(movs))
         _name = 'test_log_{}.txt'.format(fecha.split('.')[1])
         _filename = self.folder / _name
-        with open(_filename, 'w') as _file:
+        with open(str(_filename), 'w') as _file:
             _file.write(cabeza + '\n' + '\n'.join(lineas))

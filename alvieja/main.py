@@ -69,9 +69,9 @@ def train(ctx, iterations, save_rate):
     """Trains the AI"""
     player1, player2, neural_net = ctx.get_players()
     vieja_entrenamiento = TicTacToe(player1, player2, folder=ctx.folder)
-    print(("{neural_net} have "
-           "played {neural_net.iterations} games").format(**locals()))
-    print('#### training {iterations} matches ####'.format(**locals()))
+    click.echo(("{neural_net} have "
+                "played {neural_net.iterations} games").format(**locals()))
+    click.echo('#### training {iterations} matches ####'.format(**locals()))
     for _i in range(iterations // save_rate):
         vieja_entrenamiento.juego_automatizado(save_rate)
         neural_net.save(ctx.folder)
@@ -80,23 +80,29 @@ def train(ctx, iterations, save_rate):
 
 
 @cli.command()
+@click.option(
+    '--automatic/--manual',
+    default=True,
+    help='Set to manual to play against the NN')
 @pass_context
-def test(ctx):
+def test(ctx, automatic):
     """Tests the AI"""
     player1, player2, neural_net = ctx.get_players()
     click.echo("Starting testing for ia {neural_net}".format(**locals()))
-    print('#### automated test ####')
-    edbot = IAEduardo('edbot')
-    vieja_prueba = TicTacToe(edbot, player1, folder=ctx.folder)
-    totals = vieja_prueba.juego_automatizado(10)
-    # print(
-    #     f"{wolfbot} won {totals[wolfbot]},"
-    #     f" lost {totals[edbot]}, "
-    #     f"and draw {totals[None]} matches")
-    print(totals)
-    print('####m Manual test ####')
-    vieja_prueba_humano = TicTacToe(Humano('wolfang'), player2)
-    vieja_prueba_humano.partida_normal()
+    if automatic:
+        click.echo('#### automated test ####')
+        edbot = IAEduardo('edbot')
+        vieja_prueba = TicTacToe(edbot, player1, folder=ctx.folder)
+        totals = vieja_prueba.juego_automatizado(10)
+        # print(
+        #     f"{wolfbot} won {totals[wolfbot]},"
+        #     f" lost {totals[edbot]}, "
+        #     f"and draw {totals[None]} matches")
+        click.echo(totals)
+    else:
+        click.echo('#### Manual test ####')
+        vieja_prueba_humano = TicTacToe(Humano('wolfang'), player2)
+        vieja_prueba_humano.partida_normal()
 
 
 cli.add_command(train)

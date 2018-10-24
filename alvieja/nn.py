@@ -52,7 +52,7 @@ class SimpleNN:
         """Saves the synaptic data on a file"""
         _name = '{self.name}.json'.format(**locals())
         filename = Path(folder) / _name
-        with open(filename, 'w') as _file:
+        with open(str(filename), 'w') as _file:
             json.dump(
                 {
                     'trainings': self.trainings,
@@ -69,7 +69,7 @@ class SimpleNN:
         _name = '{self.name}.json'.format(**locals())
         filename = Path(folder) / _name
         if filename.exists():
-            with open(filename, 'r') as _file:
+            with open(str(filename), 'r') as _file:
                 data = json.load(_file)
                 self.iterations = data['iterations']
                 self.trainings = data['trainings']
