@@ -75,8 +75,14 @@ def train(ctx, iterations, save_rate):
     for _i in range(iterations // save_rate):
         vieja_entrenamiento.juego_automatizado(save_rate, False)
         neural_net.save(ctx.folder)
-    vieja_entrenamiento.juego_automatizado(iterations % save_rate)
-    neural_net.save(ctx.folder)
+        click.echo(
+            "played {save_rate} games, saving progress".format(**locals()))
+    # vieja_entrenamiento.juego_automatizado(iterations % save_rate)
+    # neural_net.save(ctx.folder)
+    # click.echo(
+    #     "played {iterations % save_rate} games, saving progress".format(
+    #         **locals()))
+    click.echo('#### training complete ####')
 
 
 @cli.command()
