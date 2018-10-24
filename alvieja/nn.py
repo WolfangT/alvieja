@@ -5,7 +5,7 @@ Expample Neural Network
 """
 
 import json
-from os import path
+from pathlib import Path
 
 import numpy as np
 from numpy import around, array, dot
@@ -50,7 +50,8 @@ class SimpleNN:
 
     def save(self, folder):
         """Saves the synaptic data on a file"""
-        filename = path.join(folder, '{self.name}.json'.format(**locals()))
+        _name = '{self.name}.json'.format(**locals())
+        filename = Path(folder) / _name
         with open(filename, 'w') as _file:
             json.dump(
                 {
@@ -65,8 +66,9 @@ class SimpleNN:
 
     def load(self, folder):
         """Load the synaptic data from a file"""
-        filename = path.join(folder, '{self.name}.json'.format(**locals()))
-        if path.exists(filename):
+        _name = '{self.name}.json'.format(**locals())
+        filename = Path(folder) / _name
+        if filename.exists():
             with open(filename, 'r') as _file:
                 data = json.load(_file)
                 self.iterations = data['iterations']

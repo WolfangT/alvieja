@@ -3,12 +3,10 @@
 contains the GUI
 """
 
-from os import path
+from pathlib import Path
 from tkinter import messagebox, ttk
 
 import pygubu
-
-from alvieja.ai import IAWolfang
 
 
 class Board():
@@ -25,8 +23,7 @@ class Board():
         style.configure(
             "blue.game.TButton", foreground="blue", background='blue')
         # load the files
-        self.builder.add_from_file(
-            path.join(path.dirname(path.abspath(__file__)), 'board.ui'))
+        self.builder.add_from_file(Path(__file__) / 'guis' / 'board.ui')
         self.main = self.builder.get_object('main', master)
         self.master.protocol("WM_DELETE_WINDOW", self.quit)
         self.builder.connect_callbacks(self)
@@ -71,6 +68,7 @@ class Board():
 
     def grid_clicked(self, event, arg):
         """handles the user input"""
+        del event
         print(arg, 'clicked')
 
     # Control

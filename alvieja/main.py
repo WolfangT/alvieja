@@ -22,7 +22,7 @@ class Conf:
     """Comand line interface for alvieja"""
 
     def __init__(self):
-        self.folder = Path.home()
+        self.folder = Path.cwd()
         self.name = 'alvieja'
 
     def get_players(self):
@@ -58,7 +58,7 @@ def cli(ctx, directory, name):
     click.echo('Wolcome to alvieja')
     click.echo(directory)
     ctx.name = name
-    ctx.folder = directory if directory else Path.home()
+    ctx.folder = Path(directory) if directory else Path.cwd()
 
 
 @cli.command()
@@ -68,11 +68,11 @@ def cli(ctx, directory, name):
 def train(ctx, iterations, save_rate):
     """Trains the AI"""
     player1, player2, neural_net = ctx.get_players()
-    vieja_entrenamiento = TicTacToe(player1, player2)
+    vieja_entrenamiento = TicTacToe(player1, player2, folder=ctx.folder)
     print(("{neural_net} have "
            "played {neural_net.iterations} games").format(**locals()))
     print('#### training {iterations} matches ####'.format(**locals()))
-    for i in range(iterations // save_rate):
+    for _i in range(iterations // save_rate):
         vieja_entrenamiento.juego_automatizado(save_rate)
         neural_net.save(ctx.folder)
     vieja_entrenamiento.juego_automatizado(iterations % save_rate)
@@ -87,7 +87,7 @@ def test(ctx):
     click.echo("Starting testing for ia {neural_net}".format(**locals()))
     print('#### automated test ####')
     edbot = IAEduardo('edbot')
-    vieja_prueba = TicTacToe(edbot, player1)
+    vieja_prueba = TicTacToe(edbot, player1, folder=ctx.folder)
     totals = vieja_prueba.juego_automatizado(10)
     # print(
     #     f"{wolfbot} won {totals[wolfbot]},"

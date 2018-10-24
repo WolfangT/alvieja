@@ -4,7 +4,6 @@ The 3 in a row game itself
 """
 
 from datetime import datetime
-from os import path
 from pathlib import Path
 from time import sleep
 
@@ -66,7 +65,7 @@ class TicTacToe:
             assert hasattr(
                 jugador, '__call__'), 'los jugadores deben ser ejecutables'
         self.jugadores = (jugador1, jugador2)
-        self.folder = folder if folder else Path.home()
+        self.folder = Path(folder) if folder else Path.cwd()
         self._jugador_actual = "x"
         self._tablero = [" "] * 9
 
@@ -235,6 +234,6 @@ class TicTacToe:
                 i = 1 - i
             lineas.append('%s) ' % _n + ' '.join(movs))
         _name = 'Registro competencia {0[0]}.txt'.format(fecha.split())
-        _filename = path.join(self.folder, _name)
+        _filename = self.folder / _name
         with open(_filename, 'w') as _file:
             _file.write(cabeza + '\n' + '\n'.join(lineas))
