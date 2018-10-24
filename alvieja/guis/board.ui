@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface>
+  <object class="ttk.Frame" id="main">
+    <property name="height">200</property>
+    <property name="width">200</property>
+    <layout>
+      <property name="column">0</property>
+      <property name="ipady">0</property>
+      <property name="propagate">True</property>
+      <property name="row">0</property>
+      <property name="sticky">nsew</property>
+      <rows>
+        <row id="1">
+          <property name="weight">1</property>
+        </row>
+      </rows>
+      <columns>
+        <column id="0">
+          <property name="weight">1</property>
+        </column>
+      </columns>
+    </layout>
+    <child>
+      <object class="ttk.Frame" id="F_players">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+          <property name="sticky">ew</property>
+          <columns>
+            <column id="0">
+              <property name="weight">1</property>
+            </column>
+            <column id="1">
+              <property name="weight">1</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Button" id="B_P1">
+            <property name="command">p1_pressed</property>
+            <property name="style">blue.game.TButton</property>
+            <property name="text" translatable="yes">X</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B_P2">
+            <property name="command">p2_pressed</property>
+            <property name="style">red.game.TButton</property>
+            <property name="text" translatable="yes">O</property>
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Frame" id="F_grid">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="padx">25</property>
+          <property name="pady">25</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+          <property name="sticky">nsew</property>
+          <rows>
+            <row id="0">
+              <property name="minsize">0</property>
+              <property name="weight">1</property>
+            </row>
+            <row id="1">
+              <property name="weight">1</property>
+            </row>
+            <row id="2">
+              <property name="weight">1</property>
+            </row>
+            <row id="3">
+              <property name="weight">1</property>
+            </row>
+            <row id="4">
+              <property name="weight">1</property>
+            </row>
+            <row id="5">
+              <property name="weight">1</property>
+            </row>
+            <row id="6">
+              <property name="weight">1</property>
+            </row>
+            <row id="7">
+              <property name="weight">1</property>
+            </row>
+            <row id="8">
+              <property name="weight">1</property>
+            </row>
+          </rows>
+          <columns>
+            <column id="0">
+              <property name="weight">1</property>
+            </column>
+            <column id="1">
+              <property name="weight">1</property>
+            </column>
+            <column id="2">
+              <property name="weight">1</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Button" id="B1">
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B2">
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B3">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B4">
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B5">
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B6">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">1</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B7">
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B8">
+            <layout>
+              <property name="column">1</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="ttk.Button" id="B9">
+            <layout>
+              <property name="column">2</property>
+              <property name="propagate">True</property>
+              <property name="row">2</property>
+              <property name="sticky">nsew</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="ttk.Frame" id="F_control">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout>
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">2</property>
+          <property name="sticky">ew</property>
+          <rows>
+            <row id="0">
+              <property name="weight">1</property>
+            </row>
+          </rows>
+          <columns>
+            <column id="0">
+              <property name="weight">2</property>
+            </column>
+          </columns>
+        </layout>
+        <child>
+          <object class="ttk.Button" id="B_start">
+            <property name="command">start_pressed</property>
+            <property name="text" translatable="yes">Start</property>
+            <layout>
+              <property name="column">0</property>
+              <property name="propagate">True</property>
+              <property name="row">0</property>
+              <property name="sticky">ew</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
