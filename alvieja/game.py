@@ -66,65 +66,50 @@ class TicTacToe:
                 jugador, '__call__'), 'los jugadores deben ser ejecutables'
         self.jugadores = (jugador1, jugador2)
         self.folder = Path(folder) if folder else Path.cwd()
-        self._jugador_actual = "x"
         self._tablero = [" "] * 9
 
     def partida_normal(self):
         """Una partida normal de la vieja"""
-        self._jugador_actual = "x"
         self._tablero = [" "] * 9
+        jugador = 0
+        letra = lambda jug: 'o' if jug else 'x'
         print("Bienvenido al juego de la vieja")
         # inicar a los jugadores
         for jug in self.jugadores:
-            jug.start(self)
+            jug.start()
+            print(jug)
         turnos = 0
         # bucle del juego
         while True:
             turnos += 1
-            # para efecto cinematico
-            sleep(1)
+            jugador_actual = letra(jugador)
+            jug = self.jugadores[jugador]
+            sleep(1)  # para efecto cinematico
             # seleccion de jugador y calculo de jugada
-            if self._jugador_actual == 'x':
-                print(
-                    'Tu turno {} ({})'.format(
-                        self.jugadores[0],
-                        self._jugador_actual,
-                    ))
-                pos = self.jugadores[0](
-                    self._tablero, self._jugador_actual, self.jugadas_validas)
-            else:
-                print(
-                    'Ahora es turno de {} ({})'.format(
-                        self.jugadores[1],
-                        self._jugador_actual,
-                    ))
-                pos = self.jugadores[1](
-                    self._tablero, self._jugador_actual, self.jugadas_validas)
+            print('Tu turno {jug} ({jugador_actual})'.format(**locals()))
+            pos = jug(self._tablero, jugador_actual, self.jugadas_validas)
             # actualizacion del tablero
             assert pos in self.jugadas_validas, 'esa jugada no es valida'
-            self._tablero[pos] = self._jugador_actual
+            self._tablero[pos] = jugador_actual
             self._dibujar_tablero()
             # Verificar fin del juego
-            if self.gana():
-                if self._jugador_actual == 'x':
+            if self.gana(jugador_actual):
+                if not jugador:  # x
                     self.jugadores[0].finish(1, turnos)
                     self.jugadores[1].finish(-1, turnos)
-                else:
+                else:  # o
                     self.jugadores[0].finish(-1, turnos)
                     self.jugadores[1].finish(1, turnos)
-                print("Ha ganado las", self._jugador_actual, "!")
+                print("Ha ganado las {jugador_actual}!".format(**locals()))
                 break
             elif self.empate():
                 for jug in self.jugadores:
                     jug.finish(0, turnos)
                 print("Empate!")
                 break
-            else:
-                self._jugador_actual = (
-                    "o" if self._jugador_actual == "x" else "x")
-        print("Fin del juego.")
+            jugador = 1 - jugador
 
-    def juego_automatizado(self, partidas=1000, resgistro=False):
+    def juego_automatizado(self, partidas=1000, registrar=False):
         """Recrea n partidas entre los jugadores y mide las victorias"""
         assert (isinstance(partidas, int) and
                 (partidas % 2) == 0), 'las partidas deben ser un numero par'
@@ -135,7 +120,7 @@ class TicTacToe:
             registro.append(ganador)
             bitacoras.append(bitacora)
         totales = self._calc_totales(registro)
-        if resgistro:
+        if registrar:
             self._guardar_bitacoras(bitacoras, totales)
         return totales
 
@@ -144,9 +129,9 @@ class TicTacToe:
         """Returns all valid moves"""
         return {i for i in range(9) if self._tablero[i] == ' '}
 
-    def gana(self):
+    def gana(self, jugador_actual):
         """Returns True if the current player wins, false otherwise"""
-        tab, jug = self._tablero, self._jugador_actual
+        tab, jug = self._tablero, jugador_actual
         check = lambda x, y, z: all([tab[i] == jug for i in (x, y, z)])
         pos = ((0, 1, 2), (3, 4, 5), (6, 7, 8), (0, 3, 6), (1, 4, 7),
                (2, 5, 8), (0, 4, 8), (2, 4, 6))
@@ -182,7 +167,7 @@ class TicTacToe:
         jugador = 0 if orden else 1
         letra = lambda jug: 'o' if jug else 'x'
         for jug in self.jugadores:
-            jug.start(self)
+            jug.start()
         turnos = 0
         while True:
             turnos += 1
@@ -195,7 +180,7 @@ class TicTacToe:
                 return self.jugadores[1 - jugador], bitacora
             bitacora.append(pos)
             self._tablero[pos] = jugador_actual
-            if self.gana():
+            if self.gana(jugador_actual):
                 self.jugadores[jugador].finish(1, turnos)
                 self.jugadores[1 - jugador].finish(-1, turnos)
                 return self.jugadores[jugador], bitacora

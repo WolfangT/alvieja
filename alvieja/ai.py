@@ -63,7 +63,7 @@ class IAEduardo:
         self.name = name
 
     def __str__(self):
-        return self.name
+        return "Eduardo class bot <{self.name}>".format(**locals())
 
     def start(self, *args):  #pylint: disable=W0613
         """No me importa"""
@@ -203,6 +203,23 @@ class IAEduardo:
         return pos
 
 
+class IARandom:
+    """IA player that chooses random valid moves
+    """
+
+    def __call__(self, tablero, jugador_actual, jugadas_validas):
+        return choice(tuple(jugadas_validas))
+
+    def __str__(self):
+        return "Random Bot"
+
+    def start(self):
+        pass
+
+    def finish(self, *args, **kwargs):
+        pass
+
+
 class IAWolfang:
     """Self learning 3 layer neural network"""
 
@@ -213,24 +230,25 @@ class IAWolfang:
         self.name = name
         self.neural_net = neural_net
         self.match_moves = []
-        self.game = None
+        self.invalid_moves = []
+        self.vervose = False
 
-    def start(self, game):
+    def start(self):
         """the game started"""
-        self.game = game
         self.match_moves = []
+        self.invalid_moves = []
 
     def finish(self, result, turns):
         """the game ended"""
         fitness = 9 - turns
-        repetitions = (5 * fitness**2 + 20) * 10
-        inputs, outpus = zip(*self.match_moves)
+        repetitions = 5 * fitness**2 + 20
+        inputs, outputs = zip(*self.match_moves)
         if result == 1:
-            self.neural_net.train(inputs, outpus, True, repetitions)
-        # elif result == 0:
-        #     self.neural_net.train(inputs, outpus, True, repetitions)
+            self.neural_net.train(inputs, outputs, True, 10 * repetitions)
+        elif result == 0:
+            self.neural_net.train(inputs, outputs, True, repetitions)
         elif result == -1:
-            self.neural_net.train(inputs, outpus, False, repetitions)
+            self.neural_net.train(inputs, outputs, False, repetitions)
 
     def _transform_board(self, board, player):
         """Transform te board to be usable by the NN
@@ -249,19 +267,40 @@ class IAWolfang:
         return processed
 
     def _get_ideal_ouput(self, move):
-        return [int(i == move) for i in range(9)]
+        return [0.75 if i == move else 0.25 for i in range(9)]
+
+    # def __call__(self, board, player, valid_moves):
+    #     inputs = self._transform_board(board, player)
+    #     output = self.neural_net.calculate((inputs, ))
+    #     moves = {i for i in range(9) if output[0][i] >= 0.9}
+    #     posible_moves = moves.intersection(valid_moves)
+    #     if not posible_moves:
+    #         move = choice(tuple(valid_moves))
+    #     else:
+    #         move = sorted(posible_moves, key=lambda x: output[0][x])[0]
+    #     if self.vervose:
+    #         print('output: {output[0]}, selected: {move}'.format(**locals()))
+    #     ideal_ouput = self._get_ideal_ouput(move)
+    #     self.match_moves.append((inputs, ideal_ouput))
+    #     return move
 
     def __call__(self, board, player, valid_moves):
         inputs = self._transform_board(board, player)
         output = self.neural_net.calculate((inputs, ))
-        moves = {i for i in range(9) if output[0][i] >= 0.9}
-        posible_moves = moves.intersection(valid_moves)
-        if posible_moves == set():
-            posible_moves = valid_moves
-        move = choice(tuple(posible_moves))
-        ideal_ouput = self._get_ideal_ouput(move)
-        self.match_moves.append((inputs, ideal_ouput))
-        return move
+        # moves = {i: output[0][i] for i in range(9) if output[0][i] > 0.5}
+        moves = {i: output[0][i] for i in range(9)}
+        ordered_moves = sorted(moves, key=lambda x: abs(0.75 - moves[x]))
+        for move in ordered_moves:
+            ideal_ouput = self._get_ideal_ouput(move)
+            if move in valid_moves:
+                self.match_moves.append((inputs, ideal_ouput))
+                if self.vervose:
+                    print(
+                        'output: {output[0]}, selected: {move}'.format(
+                            **locals()))
+                return move
+            else:
+                self.invalid_moves.append((inputs, ideal_ouput))
 
     def __str__(self):
-        return self.name
+        return "Neural Network Player <{self.name}>".format(**locals())

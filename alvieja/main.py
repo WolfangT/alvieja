@@ -7,7 +7,7 @@ from pathlib import Path
 
 import click
 
-from alvieja.ai import Humano, IAEduardo, IAWolfang
+from alvieja.ai import Humano, IAEduardo, IAWolfang, IARandom
 from alvieja.game import TicTacToe
 from alvieja.nn import SimpleNN
 
@@ -28,7 +28,7 @@ class Conf:
     def get_players(self):
         """Loads the with AI with its saved progress"""
         print('#### Loading AI ####')
-        neural_net = SimpleNN(self.name, 18, 18, 9)
+        neural_net = SimpleNN(self.name, 18, 10, 9)
         neural_net.load(self.folder)
         player1 = IAWolfang('Player 1', neural_net)
         player2 = IAWolfang('Player 2', neural_net)
@@ -64,51 +64,66 @@ def cli(ctx, directory, name):
 @cli.command()
 @click.argument('iterations', default=5000, type=int)
 @click.argument('save_rate', default=500, type=int)
+@click.option(
+    "-O",
+    '--oponent',
+    type=click.Choice(['edbot', 'nn', 'random']),
+    help='Set the oponent for the nn',
+    default='nn')
 @pass_context
-def train(ctx, iterations, save_rate):
+def train(ctx, iterations, save_rate, oponent):
     """Trains the AI"""
     player1, player2, neural_net = ctx.get_players()
+    if oponent == 'edbot':
+        player2 = IAEduardo('edbot')
+    elif oponent == 'random':
+        player2 = IARandom()
+    click.echo("playing {player1} against {player2}".format(**locals()))
     vieja_entrenamiento = TicTacToe(player1, player2, folder=ctx.folder)
     click.echo(("{neural_net} have "
                 "played {neural_net.iterations} games").format(**locals()))
     click.echo('#### training {iterations} matches ####'.format(**locals()))
     for _i in range(iterations // save_rate):
-        vieja_entrenamiento.juego_automatizado(save_rate, False)
+        totals = vieja_entrenamiento.juego_automatizado(save_rate, False)
+        click.echo(totals)
         neural_net.save(ctx.folder)
         click.echo(
             "played {save_rate} games, saving progress".format(**locals()))
-    # vieja_entrenamiento.juego_automatizado(iterations % save_rate)
-    # neural_net.save(ctx.folder)
-    # click.echo(
-    #     "played {iterations % save_rate} games, saving progress".format(
-    #         **locals()))
     click.echo('#### training complete ####')
 
 
 @cli.command()
 @click.option(
-    '--automatic/--manual',
-    default=True,
-    help='Set to manual to play against the NN')
+    "-O",
+    '--oponent',
+    type=click.Choice(['edbot', 'nn', 'humano', 'random']),
+    help='Set the oponent for the nn',
+    default='edbot')
 @pass_context
-def test(ctx, automatic):
+def test(ctx, oponent):
     """Tests the AI"""
     player1, player2, neural_net = ctx.get_players()
     click.echo("Starting testing for ia {neural_net}".format(**locals()))
-    if automatic:
-        click.echo('#### automated test ####')
-        edbot = IAEduardo('edbot')
-        vieja_prueba = TicTacToe(edbot, player1, folder=ctx.folder)
-        totals = vieja_prueba.juego_automatizado(10, True)
+    player2.vervose = True
+    if oponent == 'edbot':
+        click.echo('#### system test ####')
+        vieja_prueba = TicTacToe(player1, IAEduardo('edbot'))
+        click.echo(vieja_prueba.juego_automatizado(100))
         # print(
         #     f"{wolfbot} won {totals[wolfbot]},"
         #     f" lost {totals[edbot]}, "
         #     f"and draw {totals[None]} matches")
-        click.echo(totals)
-    else:
+    elif oponent == "nn":
+        click.echo('#### automated test ####')
+        player1.vervose = True
+        vieja_prueba = TicTacToe(player1, player2)
+    elif oponent == 'humano':
         click.echo('#### Manual test ####')
-        vieja_prueba_humano = TicTacToe(Humano('wolfang'), player2)
-        vieja_prueba_humano.partida_normal()
+        vieja_prueba = TicTacToe(Humano(), player2)
+    elif oponent == 'random':
+        click.echo('#### random test ####')
+        vieja_prueba = TicTacToe(IARandom(), player2)
+    vieja_prueba.partida_normal()
 
 
 cli.add_command(train)

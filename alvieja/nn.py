@@ -5,10 +5,11 @@ Expample Neural Network
 """
 
 import json
+import math
 from pathlib import Path
 
 import numpy as np
-from numpy import around, array, dot
+from numpy import array, dot
 
 # inicializa el generador aleatorio de forma estatica
 np.random.seed(1)  # pylint: disable=E1101
@@ -16,8 +17,7 @@ np.random.seed(1)  # pylint: disable=E1101
 
 def sigmoid(x):  #pylint: disable=C0103
     """funcion Sigmoid, convierte un valor de -inf a +inf a uno de 0 a 1"""
-    data = 1 / (1 + np.exp(-x))
-    return around(data, 2)
+    return 1 / (1 + np.exp(-x))
 
 
 def d_sigmoid_pos(x):  #pylint: disable=C0103
@@ -27,7 +27,21 @@ def d_sigmoid_pos(x):  #pylint: disable=C0103
 
 def d_sigmoid_neg(x):  #pylint: disable=C0103
     """derivate of the sigmoid, inverted on x axis"""
-    return 4 * (x - 0.5)**2
+    return (x - 0.5)**2
+
+
+def sgd(max_iterations):
+    """Stochastic Gradient Descent with Warm Restarts,
+    proposed by Loshchilov & Hutter
+
+    :param max_iterations: number of iterations till the lr is resetted
+    :type max_iterations: int
+    """
+
+    def learning_rate(iterations):
+        return abs(math.cos(2 * iterations * math.pi / max_iterations))
+
+    return learning_rate
 
 
 class SimpleNN:
@@ -39,6 +53,7 @@ class SimpleNN:
         self.bias2 = 2 * np.random.random((1, outputs)) - 1
         self.syn1 = 2 * np.random.random((inputs, hidden)) - 1
         self.syn2 = 2 * np.random.random((hidden, outputs)) - 1
+        self.learning_rate = sgd(100)
         self.trainings = 0
         self.iterations = 0
 
@@ -80,23 +95,26 @@ class SimpleNN:
 
     def _fordward_propagate(self, layer0):
         """Forward propagation"""
-        layer1 = sigmoid(dot(layer0, self.syn1) + self.bias1)
-        layer2 = sigmoid(dot(layer1, self.syn2) + self.bias2)
+        layer1 = sigmoid(dot(layer0, self.syn1))  # + self.bias1)
+        layer2 = sigmoid(dot(layer1, self.syn2))  # + self.bias2)
         return layer1, layer2
 
     def _backward_propagate(self, layer0, expected, progresive):
         """Backward propagation thourh the layers"""
-        sign = 1 if progresive else -1
-        # acelerator = d_sigmoid_pos if progresive else d_sigmoid_neg
         layer1, layer2 = self._fordward_propagate(layer0)
-        l2_error = sign * (expected - layer2) * d_sigmoid_pos(layer2)
-        l1_error = dot(l2_error, self.syn2.T) * d_sigmoid_pos(layer1)
-        self.syn1 += dot(layer0.T, l1_error)
-        l1_error_t = l1_error.T
-        self.bias1 += [sum(l1_error_t[i]) for i in range(len(self.bias1))]
-        self.syn2 += dot(layer1.T, l2_error)
-        l2_error_t = l2_error.T
-        self.bias2 += [sum(l2_error_t[i]) for i in range(len(self.bias2))]
+        learning_rate = self.learning_rate(self.iterations)
+        dir_d_sigmoid = d_sigmoid_pos if progresive else d_sigmoid_neg
+        error_size = (expected - layer2) if progresive else (0.5 - layer2)
+        # dir_d_sigmoid = d_sigmoid_pos
+        # error_size = (expected - layer2)
+        l2_error = error_size * dir_d_sigmoid(layer2)
+        l1_error = dot(l2_error, self.syn2.T) * dir_d_sigmoid(layer1)
+        ajuste1 = dot(layer0.T, l1_error) * learning_rate
+        ajuste2 = dot(layer1.T, l2_error) * learning_rate
+        self.syn1 += ajuste1
+        # self.bias1 += [sum(l1_error.T[i]) for i in range(len(self.bias1))]
+        self.syn2 += ajuste2
+        # self.bias2 += [sum(l2_error.T[i]) for i in range(len(self.bias2))]
 
     def calculate(self, inputs):
         """Calculates an answer to the imputs"""
