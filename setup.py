@@ -13,7 +13,7 @@ def readme():
 
 setup(
     name="alvieja",
-    version="0.1",
+    version="0.2",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',

@@ -244,9 +244,9 @@ class IAWolfang:
         repetitions = 5 * fitness**2 + 20
         inputs, outputs = zip(*self.match_moves)
         if result == 1:
-            self.neural_net.train(inputs, outputs, True, 10 * repetitions)
+            self.neural_net.train(inputs, outputs, True, 2 * repetitions)
         elif result == 0:
-            self.neural_net.train(inputs, outputs, True, repetitions)
+            self.neural_net.train(inputs, outputs, True, repetitions / 2)
         elif result == -1:
             self.neural_net.train(inputs, outputs, False, repetitions)
 
