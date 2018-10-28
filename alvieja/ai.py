@@ -246,7 +246,7 @@ class IAWolfang:
         if result == 1:
             self.neural_net.train(inputs, outputs, True, 2 * repetitions)
         elif result == 0:
-            self.neural_net.train(inputs, outputs, True, repetitions / 2)
+            self.neural_net.train(inputs, outputs, True, repetitions // 2)
         elif result == -1:
             self.neural_net.train(inputs, outputs, False, repetitions)
 
