@@ -2,7 +2,7 @@
 
 from random import choice
 
-from alvieja.nn import SimpleNN
+from .nn import SimpleNN
 
 POSICIONES = {
     "z": 0,

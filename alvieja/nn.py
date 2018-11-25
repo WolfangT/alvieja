@@ -30,7 +30,7 @@ def d_sigmoid_neg(x):  #pylint: disable=C0103
     return (x - 0.5)**2
 
 
-def sgd(max_iterations):
+def sgd(frequency, amplitude=1):
     """Stochastic Gradient Descent with Warm Restarts,
     proposed by Loshchilov & Hutter
 
@@ -39,7 +39,16 @@ def sgd(max_iterations):
     """
 
     def learning_rate(iterations):
-        return abs(math.cos(2 * iterations * math.pi / max_iterations))
+        return abs(amplitude * math.cos(2 * iterations * math.pi / frequency))
+
+    return learning_rate
+
+
+def clr(amplitude):
+    """Constant learnintg rate"""
+
+    def learning_rate(iterations):  #pylint: disable=W0613
+        return amplitude
 
     return learning_rate
 
@@ -47,13 +56,13 @@ def sgd(max_iterations):
 class SimpleNN:
     """Simplpe 1 layer Neural Net"""
 
-    def __init__(self, name, inputs, hidden, outputs):
+    def __init__(self, name, inputs, hidden, outputs, lr=sgd(1000)):
         self.name = name
         self.bias1 = 2 * np.random.random((1, hidden)) - 1
         self.bias2 = 2 * np.random.random((1, outputs)) - 1
         self.syn1 = 2 * np.random.random((inputs, hidden)) - 1
         self.syn2 = 2 * np.random.random((hidden, outputs)) - 1
-        self.learning_rate = sgd(100)
+        self.learning_rate = lr
         self.trainings = 0
         self.iterations = 0
 
